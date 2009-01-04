@@ -4,5 +4,6 @@ http://www.nulib.com/library/FTN.e00005.htm
 
 I recently encountered a 32-meg image with the following values:
 
+|| *offset* || *description* || *value* ||
 || +80 || disk format || $ff ||
 || +81 || format byte || $22 ||
