@@ -1,0 +1,8 @@
+#summary Information on the disk copy 4.2 file format.
+
+http://www.nulib.com/library/FTN.e00005.htm
+
+I recently encountered a 32-meg image with the following values:
+
+|| +80 || disk format || $ff ||
+|| +81 || format byte || $22 ||
