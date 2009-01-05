@@ -1,0 +1,3 @@
+#summary The Universal Disk Image Format
+
+http://web.archive.org/web/20060308055210/http://www.a2central.com/programming/filetypes/ftne00130.html
