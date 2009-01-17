@@ -1,0 +1,12 @@
+#summary Information on compiling under Linux
+
+`make -f makefile.linux`
+
+ProFUSE has only been tested on linux 2.6.18/ARM with gcc 4.1.2 and fuse 2.7.4.  That's a debian etch, with a custom compile of fuse 2.7.4 (the standard libfuse2/fuse-dev is based on 2.5.3 and ProFUSE requires 2.6+)
+
+Currently, it compiles and runs, but isn't usable yet.  specifically:
+
+files can't be read.
+ls gives spurious errors.
+
+This may be related to acl xattr support.
