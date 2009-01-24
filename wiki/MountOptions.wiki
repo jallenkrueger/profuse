@@ -1,0 +1,6 @@
+#summary commandline options
+
+`--dos-order`
+
+While most ProDOS disk images are in ProDOS order, some people occasionally create them in dos 3.3 order (usually 5.25" disk images with a `.do` or `.dsk` extension).  the `--dos-order` flag will compensate for their screwed up interleaving.  
+
