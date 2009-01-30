@@ -7,6 +7,7 @@
   * `--dos-order` flag
   * fix tree sparse-file support 
   * (linux) fixes to compile and run correctly.
+  * fixed volume creation/modification dates.
  
 =release 2=
  
