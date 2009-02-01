@@ -1,0 +1,27 @@
+#summary Information on compiling and using with FreeBSD
+
+= Introduction =
+
+ProFUSE has been tested with FreeBSD version 7.1, [http://fuse4bsd.creo.hu/ fuse4bsd], 0.3.9, and FUSE 2.7.3
+
+= Compiling =
+
+The fusefs-kmod and fusefs-libs packages must be installed.
+
+{{{
+ make -f makefile.freebsd
+}}}
+
+= Usage =
+
+{{{
+
+profuse [options] disk-image mount-folder
+
+}}} 
+
+= Limitations =
+
+See the [http://fuse4bsd.creo.hu/ fuse4bsd] site for more details on the FreeBSD FUSE module.
+
+Fuse For FreeBSD does not currently support extended attributes, so they will not be accessible.
