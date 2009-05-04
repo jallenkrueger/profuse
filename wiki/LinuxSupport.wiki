@@ -2,7 +2,7 @@
 
 = Introduction =
 
-ProFUSE has been tested with Linux 2.6.18/ARM with gcc 4.1.2 and fuse 2.7.4.  That's a debian etch, with a custom compile of fuse 2.7.4 (the standard libfuse2/fuse-dev is based on 2.5.3 and ProFUSE requires 2.6+)
+ProFUSE has been tested with Linux 2.6.x/ARM with gcc 4.x and fuse 2.7.4.  For lenny, that means `apt-get install libfuse2 libfuse-dev`.  Etch uses fuse 2.5.3, which is not supported.  You will need to compile and install your own libfuse.
 
 
 = Compiling =
