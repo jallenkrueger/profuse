@@ -27,4 +27,4 @@ The `profuse` command must be run by root (or be setguid root).  By default, the
 ?--------- ? ?      ?           ?            ? mnt
 }}}
 
-and will be inaccessible.   The `-oallow_others` flag will give everyone access the mount dir.
+and will be inaccessible.   The `-oallow_other` flag will give everyone access the mount dir.
