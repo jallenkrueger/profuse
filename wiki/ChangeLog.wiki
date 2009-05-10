@@ -1,0 +1,8 @@
+#summary List of things that  have changed between versions
+
+R4
+
+  * Create `com.apple.FinderInfo` xattr for all files
+  * Populate `com.apple.FinderInfo` creator/filetype info similar to system 6 if not populated.  
+  * Fix for DST bug
+  * add `user.mime_type` and `user.mimecharset`xattr for linux.
