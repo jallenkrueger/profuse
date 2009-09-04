@@ -1,4 +1,4 @@
-#summary Information about the `xattr` utility
+#summary Information about the xattr utility
 
 = Introduction =
 
