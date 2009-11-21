@@ -15,8 +15,8 @@ This is the file entry, as originally defined in ProDOS/SOS.
 || min_version || $1d || 1 byte ||
 || access || $1e || 1 byte || 
 || aux_type || $1f || 2 bytes ||
-|| last_mod || $20 || 4 bytes ||
-|| header_pointer || $24 || 2 bytes ||
+|| last_mod || $21 || 4 bytes ||
+|| header_pointer || $25 || 2 bytes ||
 
 = Updates = 
 
@@ -34,5 +34,5 @@ This is the file entry, as originally defined in ProDOS/SOS.
 || name_case_flag || $1c || 2 bytes ||
 || access || $1e || 1 byte || 
 || aux_type || $1f || 2 bytes ||
-|| last_mod || $20 || 4 bytes ||
-|| header_pointer || $24 || 2 bytes ||
+|| last_mod || $21 || 4 bytes ||
+|| header_pointer || $25 || 2 bytes ||
