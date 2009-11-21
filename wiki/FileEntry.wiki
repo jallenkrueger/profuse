@@ -20,7 +20,7 @@ This is the file entry, as originally defined in ProDOS/SOS.
 
 = Updates = 
 
-The `version`/`min_version` fields were deprecated and replaced with filename case information as of GS/OS System 5.  Refer to [http://www.umich.edu/~archive/apple2/technotes/tn/gsos/TN.GSOS.008 GS/OS Technote #8]
+  * The `version`/`min_version` fields were deprecated and replaced with filename case information as of IIgs System 5.  Refer to [http://www.umich.edu/~archive/apple2/technotes/tn/gsos/TN.GSOS.008 GS/OS Technote #8]
 
 || *Name* || *Offset* || *Size* ||
 || storage_type || $00 || 4bits ||
