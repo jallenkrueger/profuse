@@ -1,0 +1,39 @@
+#summary Information and Structure of ProDOS Volume Directories.
+
+This is the volume directory, as originally defined in ProDOS/SOS.
+
+|| *Name* || *Offset* || *Size* ||
+|| storage_type || $00 || 4bits ||
+|| name_length || $00 || 4 bits || 
+|| file_name || $01 || 15 bytes ||
+|| reserved || $10 || 8 bytes ||
+|| creation || $18 || 4 bytes ||
+|| version || $1c || 1 byte ||
+|| min_version || $1d || 1 byte ||
+|| access || $1e || 1 byte || 
+|| entry_length || $1f || 1 byte || 
+|| entries_per_block || $20 || 1 byte || 
+|| file_count || $21 || 2 byte || 
+|| bit_map_pointer || $23 || 2 bytes || 
+|| total_blocks || $25 || 2 bytes || 
+
+= Updates =
+
+  * Part of the reserved data was later used for the modification date. 
+  * The `version` and `min_version` fields are used to store filename case information as of IIgs System 5.
+
+|| *Name* || *Offset* || *Size* ||
+|| storage_type || $00 || 4bits ||
+|| name_length || $00 || 4 bits || 
+|| file_name || $01 || 15 bytes ||
+|| reserved || $10 || 2 bytes ||
+|| last_mod || $12 || 4 bytes ||
+|| reserved || $16 || 2 bytes ||
+|| creation || $18 || 4 bytes ||
+|| file_name_case || $1c || 2 bytes ||
+|| access || $1e || 1 byte || 
+|| entry_length || $1f || 1 byte || 
+|| entries_per_block || $20 || 1 byte || 
+|| file_count || $21 || 2 byte || 
+|| bit_map_pointer || $23 || 2 bytes || 
+|| total_blocks || $25 || 2 bytes || 
