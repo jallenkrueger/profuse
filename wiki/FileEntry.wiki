@@ -36,3 +36,22 @@ This is the file entry, as originally defined in ProDOS/SOS.
 || aux_type || $1f || 2 bytes ||
 || last_mod || $21 || 4 bytes ||
 || header_pointer || $25 || 2 bytes ||
+
+= Fields = 
+
+== storage_type ==
+
+The storage type is stored in the high 4 bits.  Valid values are:
+
+|| 0x01 || Seedling file ||
+|| 0x02 || Sapling File ||
+|| 0x03 || Tree File ||
+|| 0x04 || Apple II Pascal Area ||
+|| 0x05 || Extended File ||
+|| 0x0D || Directory ||
+|| 0x0E || Subdirectory Key Block ||
+|| 0x0F || Volume Key Block ||
+
+Type 0x04 and 0x05 were not a part of the original ProDOS specification and are not supported under ProDOS 8.  Refer to [http://www.umich.edu/~archive/apple2/technotes/tn/pdos/TN.PDOS.025 ProDOS Technote #25]
+
+Types 0x0E and 0x0F are not used in the File Entry.
