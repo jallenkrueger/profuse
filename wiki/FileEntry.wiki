@@ -1,0 +1,38 @@
+#summary Information and Structure of ProDOS File Entries.
+
+This is the file entry, as originally defined in ProDOS/SOS.
+
+|| *Name* || *Offset* || *Size* ||
+|| storage_type || $00 || 4bits ||
+|| name_length || $00 || 4 bits || 
+|| file_name || $01 || 15 bytes ||
+|| file_type || $10 || 1 byte ||
+|| key_pointer || $11 || 2 bytes ||
+|| blocks_used || $13 || 2 bytes ||
+|| EOF || $15 || 3 bytes ||
+|| creation || $18 || 4 bytes ||
+|| version || $1c || 1 byte ||
+|| min_version || $1d || 1 byte ||
+|| access || $1e || 1 byte || 
+|| aux_type || $1f || 2 bytes ||
+|| last_mod || $20 || 4 bytes ||
+|| header_pointer || $24 || 2 bytes ||
+
+= Updates = 
+
+The `version`/`min_version` fields were deprecated and replaced with filename case information as of GS/OS System 5.  Refer to [http://www.umich.edu/~archive/apple2/technotes/tn/gsos/TN.GSOS.008 GS/OS Technote #8]
+
+|| *Name* || *Offset* || *Size* ||
+|| storage_type || $00 || 4bits ||
+|| name_length || $00 || 4 bits || 
+|| file_name || $01 || 15 bytes ||
+|| file_type || $10 || 1 byte ||
+|| key_pointer || $11 || 2 bytes ||
+|| blocks_used || $13 || 2 bytes ||
+|| EOF || $15 || 3 bytes ||
+|| creation || $18 || 4 bytes ||
+|| name_case_flag || $1c || 2 bytes ||
+|| access || $1e || 1 byte || 
+|| aux_type || $1f || 2 bytes ||
+|| last_mod || $20 || 4 bytes ||
+|| header_pointer || $24 || 2 bytes ||
