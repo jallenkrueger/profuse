@@ -22,3 +22,4 @@ This is the directory header, as originally defined in ProDOS/SOS.
 = Update =
 
   * A $75 is often stored in the reserved data byte 1 ($10). This is not documented.
+  * SOS 1.3 refers to reserved byte 1 ($10) as the password enabled byte and stores $76 as a dummy value. It refers to reserved byte 2 ($11 -- $17) as the encoded password, although there is no support for it.
