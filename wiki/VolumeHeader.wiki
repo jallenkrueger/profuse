@@ -29,7 +29,7 @@ This is the volume directory, as originally defined in ProDOS/SOS.
 || file_name || $01 || 15 bytes ||
 || reserved || $10 || 2 bytes ||
 || last_mod || $12 || 4 bytes ||
-|| file_name_case || $16 || 2 bytes ||
+|| file_name_case_bits || $16 || 2 bytes ||
 || creation || $18 || 4 bytes ||
 || version || $1c || 1 byte ||
 || min_version || $1d || 1 byte ||
