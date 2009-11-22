@@ -31,7 +31,7 @@ This is the file entry, as originally defined in ProDOS/SOS.
 || blocks_used || $13 || 2 bytes ||
 || EOF || $15 || 3 bytes ||
 || creation || $18 || 4 bytes ||
-|| name_case_flag || $1c || 2 bytes ||
+|| file_name_case_bits || $1c || 2 bytes ||
 || access || $1e || 1 byte || 
 || aux_type || $1f || 2 bytes ||
 || last_mod || $21 || 4 bytes ||
