@@ -3,8 +3,8 @@
 This is the file entry, as originally defined in ProDOS/SOS.
 
 || *Name* || *Offset* || *Size* ||
-|| storage_type || $00 || 4bits ||
-|| name_length || $00 || 4 bits || 
+|| storage_type || $00 || 4 bits (high) ||
+|| name_length || $00 || 4 bits (low) || 
 || file_name || $01 || 15 bytes ||
 || file_type || $10 || 1 byte ||
 || key_pointer || $11 || 2 bytes ||
@@ -23,8 +23,8 @@ This is the file entry, as originally defined in ProDOS/SOS.
   * The `version`/`min_version` fields were deprecated and replaced with filename case information as of IIgs System 5.  Refer to [http://www.umich.edu/~archive/apple2/technotes/tn/gsos/TN.GSOS.008 GS/OS Technote #8]
 
 || *Name* || *Offset* || *Size* ||
-|| storage_type || $00 || 4bits ||
-|| name_length || $00 || 4 bits || 
+|| storage_type || $00 || 4 bits (high) ||
+|| name_length || $00 || 4 bits (low) || 
 || file_name || $01 || 15 bytes ||
 || file_type || $10 || 1 byte ||
 || key_pointer || $11 || 2 bytes ||
