@@ -17,3 +17,9 @@ This is the directory header, as originally defined in ProDOS/SOS.
 || parent_pointer  || $23 || 2 bytes || 
 || parent_entry_number  || $25 || 1 byte || 
 || parent_entry_length  || $26 || 1 byte || 
+
+
+= Update =
+
+  * Position $10 (first reserved byte) contains a $75 or $76.  The purpose is not documented.
+  * SOS stores a $75 for the volume header, $76 for the directory header?
