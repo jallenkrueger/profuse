@@ -3,8 +3,8 @@
 This is the volume directory, as originally defined in ProDOS/SOS.
 
 || *Name* || *Offset* || *Size* ||
-|| storage_type || $00 || 4bits ||
-|| name_length || $00 || 4 bits || 
+|| storage_type || $00 || 4 bits (high) ||
+|| name_length || $00 || 4 bits (low) || 
 || file_name || $01 || 15 bytes ||
 || reserved || $10 || 8 bytes ||
 || creation || $18 || 4 bytes ||
@@ -24,8 +24,8 @@ This is the volume directory, as originally defined in ProDOS/SOS.
   * Part of the reserved data is used to store `file_name` case information as of IIgs System 5.  Refer to [http://www.umich.edu/~archive/apple2/technotes/tn/gsos/TN.GSOS.008 GS/OS Technote #8].
 
 || *Name* || *Offset* || *Size* ||
-|| storage_type || $00 || 4bits ||
-|| name_length || $00 || 4 bits || 
+|| storage_type || $00 || 4 bits (high) ||
+|| name_length || $00 || 4 bits (low) || 
 || file_name || $01 || 15 bytes ||
 || reserved || $10 || 2 bytes ||
 || last_mod || $12 || 4 bytes ||
