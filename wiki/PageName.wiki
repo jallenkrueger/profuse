@@ -17,22 +17,3 @@ This is the directory header, as originally defined in ProDOS/SOS.
 || parent_pointer  || $23 || 2 bytes || 
 || parent_entry_number  || $25 || 1 byte || 
 || parent_entry_length  || $26 || 1 byte || 
-
-
-= Updated =
-
-
-|| *Name* || *Offset* || *Size* ||
-|| storage_type || $00 || 4bits ||
-|| name_length || $00 || 4 bits || 
-|| file_name || $01 || 15 bytes ||
-|| reserved || $10 || 8 bytes ||
-|| creation || $18 || 4 bytes ||
-|| file_name_case || $1c || 2 bytes ||
-|| access || $1e || 1 byte || 
-|| entry_length || $1f || 1 byte || 
-|| entries_per_block || $20 || 1 byte || 
-|| file_count || $21 || 2 byte || 
-|| parent_pointer  || $23 || 2 bytes || 
-|| parent_entry_number  || $25 || 1 byte || 
-|| parent_entry_length  || $26 || 1 byte || 
