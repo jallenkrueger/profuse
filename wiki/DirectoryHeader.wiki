@@ -23,3 +23,4 @@ This is the directory header, as originally defined in ProDOS/SOS.
 
   * A $75 is often stored in the reserved data byte 1 ($10). This is not documented.
   * SOS 1.3 refers to reserved byte 1 ($10) as the password enabled byte and stores $76 as a dummy value. It refers to reserved byte 2 ($11 -- $17) as the encoded password, although there is no support for it.
+  * ProDOS 1.7 is similar to SOS 1.3 with respect to the reserved area being used for a password enabled byte/password, but stores $75 instead of $76.  When reading a directory, reserved byte 1 ($10) MUST contain 5 bits set (eg $74 or $76).  Otherwise, error $4a is returned.
