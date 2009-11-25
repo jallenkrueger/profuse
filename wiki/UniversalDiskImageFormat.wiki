@@ -48,3 +48,11 @@ The image data format.  Valid values are:
 || DOS 3.3 Order || 0 ||
 || ProDOS Order || 1 ||
 || Nibblized data || 2 ||
+
+== flags ==
+Bit flags pertaining to the disk image.  Undefined fields must be set to 0.
+
+|| *Bit* || *Description* ||
+|| 31 || If this bit is set, the disk is locked. ||
+|| 8 || If this bit is set, bits 0--7 are valid.  If this bit is not set, a DOS 3.3 <br> Volume number of 254 should be assumed  || 
+|| 0--7 || The DOS 3.3 volume number (0--254).  Only valid if bit 8 is set ||
