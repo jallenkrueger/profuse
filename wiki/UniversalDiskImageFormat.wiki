@@ -54,5 +54,26 @@ Bit flags pertaining to the disk image.  Undefined fields must be set to 0.
 
 || *Bit* || *Description* ||
 || 31 || If this bit is set, the disk is locked. ||
-|| 8 || If this bit is set, bits 0--7 are valid.  If this bit is not set, a DOS 3.3 <br> Volume number of 254 should be assumed  || 
+|| 8 || If this bit is set, bits 0--7 are valid.  If this bit is not set, a <br> volume number of 254 should be assumed  || 
 || 0--7 || The DOS 3.3 volume number (0--254).  Only valid if bit 8 is set ||
+
+== blocks ==
+The number of 512-byte blocks in the disk image.  For Non-ProDOS Order disk images, this field should be 0.
+
+==data_offset==
+Offset to the first byte of the image data.  The image data must come before the comment data and the creator data (if present).
+
+== data_length ==
+Length of the image data in bytes.  For ProDOS Order disk image, this should be blocks * 512.
+
+==comment_offset==
+Offset to the first byte of the comment data.  May be 0 if there is no comment. 
+
+==comment_length ==
+Length of the comment data.  May be 0 if there is no comment.
+
+==creator_offset==
+Offset to the first byte of the creator-specific data.  May be 0 if there is no creator-specific data. 
+
+==creator_length ==
+Length of the creator-specific data.  May be 0 if there is no creator-specific data.
