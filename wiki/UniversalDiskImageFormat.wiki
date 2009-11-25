@@ -3,7 +3,7 @@
 Please refer to the [http://web.archive.org/web/20060308055210/http://www.a2central.com/programming/filetypes/ftne00130.html documentation] for any ambiguities.
 
 
-Universal Disk Images (.2mg or .2img) consist of a 64-byte header, disk image data.  An optional comment chunk and creator-specific chunk (in that order) may be present after the image data.
+Universal Disk Images (.2mg or .2img) consist of a 64-byte header followed by disk image data.  An optional comment chunk and creator-specific chunk (in that order) may be present after the image data.
 
 All values are stored in little endian format.
 
