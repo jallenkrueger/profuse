@@ -20,3 +20,17 @@ All values stored little endian.
 || creator_length || $2c || 4 bytes ||
 || reserved || $30 || 16 bytes ||
 
+
+== magic_code ==
+
+This is the string '2IMG'.
+
+==  creator_code ==
+This is a four-character tag which identifies the file creator.  Currently know values are:
+
+|| *Code* || *Application* ||
+|| B2TR || Bernie ][ the Rescue ||
+|| CTKG || Catakig ||
+|| ShIm || Sheppy's ImageMaker ||
+|| WOOF || Sweet 16 ||
+|| PRFS || ProFUSE ||
