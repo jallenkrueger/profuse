@@ -1,3 +1,22 @@
 #summary The Universal Disk Image Format
 
-http://web.archive.org/web/20060308055210/http://www.a2central.com/programming/filetypes/ftne00130.html
+Please refer to the [http://web.archive.org/web/20060308055210/http://www.a2central.com/programming/filetypes/ftne00130.html documentation] for any ambiguities.
+
+All values stored little endian.
+
+|| *Name* || *Offset* || *Size* ||
+||  magic_code || $00 || 4 bytes ||
+|| creator_code || $04  || 4 bytes ||
+|| header_length || $08 || 2 bytes ||
+|| version || $0A || 2 bytes ||
+|| format || $0c || 4 bytes ||
+|| flags || $10 || 4 bytes ||
+|| blocks || $14 || 4 bytes ||
+|| data_offset || $18 || 4 bytes ||
+|| data_length || $1c || 4 bytes ||
+|| comment_offset || $20 || 4 bytes ||
+|| comment_length || $24 || 4 bytes ||
+|| creator_offset || $28 || 4 bytes ||
+|| creator_length || $2c || 4 bytes ||
+|| reserved || $30 || 16 bytes ||
+
