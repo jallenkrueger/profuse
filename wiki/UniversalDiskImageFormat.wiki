@@ -28,9 +28,23 @@ This is the string '2IMG'.
 ==  creator_code ==
 This is a four-character tag which identifies the file creator.  Currently know values are:
 
-|| *Code* || *Application* ||
-|| B2TR || Bernie ][ the Rescue ||
-|| CTKG || Catakig ||
-|| ShIm || Sheppy's ImageMaker ||
-|| WOOF || Sweet 16 ||
-|| PRFS || ProFUSE ||
+|| *Application* || *Code* ||
+|| Bernie ][ the Rescue || B2TR ||
+|| Catakig || CTKG ||
+|| Sheppy's ImageMaker || ShIm ||
+|| Sweet 16 || WOOF ||
+|| ProFUSE || PRFS ||
+
+== header_length ==
+This is the length of the header.  Although the documentation specifies 52 (which excludes reserved bytes), some files are known to use 64.
+
+== version ==
+The version number of the image file.  This should be 1.
+
+== image_format==
+The image data format.  Valid values are:
+
+|| *Format* || *Value* ||
+|| DOS 3.3 Order || 0 ||
+|| ProDOS Order || 1 ||
+|| Nibblized data || 2 ||
