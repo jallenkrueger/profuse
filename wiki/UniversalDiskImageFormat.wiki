@@ -11,7 +11,7 @@ All values are stored in little endian format.
 ||  magic_code || $00 || 4 bytes ||
 || creator_code || $04  || 4 bytes ||
 || header_length || $08 || 2 bytes ||
-|| version || $0A || 2 bytes ||
+|| version || $0a || 2 bytes ||
 || format || $0c || 4 bytes ||
 || flags || $10 || 4 bytes ||
 || blocks || $14 || 4 bytes ||
