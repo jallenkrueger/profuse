@@ -2,7 +2,10 @@
 
 Please refer to the [http://web.archive.org/web/20060308055210/http://www.a2central.com/programming/filetypes/ftne00130.html documentation] for any ambiguities.
 
-All values stored little endian.
+
+Universal Disk Images (.2mg or .2img) consistent of a 64-byte header, disk image data.  An optional comment chunk and creator-specific chunk (in that order) may be present after the image data.
+
+All values are stored in little endian format.
 
 || *Name* || *Offset* || *Size* ||
 ||  magic_code || $00 || 4 bytes ||
