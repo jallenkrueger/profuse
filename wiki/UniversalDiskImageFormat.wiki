@@ -53,7 +53,7 @@ The image data format.  Valid values are:
 || Nibblized data || 2 ||
 
 == flags ==
-Bit flags pertaining to the disk image.  Undefined fields must be set to 0.
+Bit flags pertaining to the disk image.  Undefined bits should be set to 0.
 
 || *Bit* || *Description* ||
 || 31 || If this bit is set, the disk is locked. ||
