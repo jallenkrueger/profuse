@@ -43,14 +43,14 @@ This is the file entry, as originally defined in ProDOS/SOS.
 
 The storage type is stored in the high 4 bits.  Valid values are:
 
-|| 0x01 || [SeedlingFile Seedling File] ||
-|| 0x02 || [SaplingFile Sapling File] ||
-|| 0x03 || [TreeFile Tree File] ||
-|| 0x04 || [PascalArea Apple II Pascal Area] ||
-|| 0x05 || [ExtendedFile Extended File] ||
-|| 0x0D || [DirectoryFile Directory] ||
-|| 0x0E || Subdirectory Key Block ||
-|| 0x0F || Volume Key Block ||
+|| $01 || [SeedlingFile Seedling File] ||
+|| $02 || [SaplingFile Sapling File] ||
+|| $03 || [TreeFile Tree File] ||
+|| $04 || [PascalArea Apple II Pascal Area] ||
+|| $05 || [ExtendedFile Extended File] ||
+|| $0D || [DirectoryFile Directory] ||
+|| $0E || Subdirectory Key Block ||
+|| $0F || Volume Key Block ||
 
 Type 0x04 and 0x05 were not a part of the original ProDOS specification and are not supported under ProDOS 8.  Refer to [http://www.umich.edu/~archive/apple2/technotes/tn/pdos/TN.PDOS.025 ProDOS Technote #25]
 
