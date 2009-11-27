@@ -43,12 +43,12 @@ This is the file entry, as originally defined in ProDOS/SOS.
 
 The storage type is stored in the high 4 bits.  Valid values are:
 
-|| 0x01 || Seedling file ||
-|| 0x02 || Sapling File ||
-|| 0x03 || Tree File ||
-|| 0x04 || Apple II Pascal Area ||
-|| 0x05 || Extended File ||
-|| 0x0D || Directory ||
+|| 0x01 || [SeedlingFile Seedling File] ||
+|| 0x02 || [SaplingFile Sapling File] ||
+|| 0x03 || [TreeFile Tree File] ||
+|| 0x04 || [PascalArea Apple II Pascal Area] ||
+|| 0x05 || [ExtendedFile Extended File] ||
+|| 0x0D || [DirectoryFile Directory] ||
 || 0x0E || Subdirectory Key Block ||
 || 0x0F || Volume Key Block ||
 
