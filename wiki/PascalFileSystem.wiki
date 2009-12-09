@@ -6,6 +6,9 @@ UCSD Pascal was a language/OS/File System developed by the University of Califor
 
 The Pascal File system used 512k blocks (like ProDOS) and 2-byte block pointers (which implies a maximum disk size of 32 Meg, like ProDOS).  Files don't store their file size per se, but rather the start block, end block, and size of last block.  This implies a maximum file size of 32 Meg, minus the overhead of boot and volume blocks. 
 
+
+Block 0 and 1 contain boot code.  Blocks 2--5 contain the volume header and up to 76 file entries
+
 = Volume Header =
 
 All values are little-endian unless specified otherwise.
@@ -33,3 +36,14 @@ All values are little-endian unless specified otherwise.
 || file_name || $06 || 16 bytes ||
 || last_byte || $16 || 2 bytes ||
 || modification_date || $18 || 2 bytes ||
+
+= Dates =
+
+Dates are stored in a 2 bytes structure:
+
+|| *Field* || *bits* || *range* ||
+|| year || 15--9 || 0-100 ||
+|| month ||8--4 || 0--12 ||
+|| day || 0--3 || 0 -- 31 ||
+
+Year 100 is used to indicate a temporary file.
