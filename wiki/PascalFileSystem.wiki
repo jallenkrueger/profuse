@@ -46,4 +46,7 @@ Dates are stored in a 2 bytes structure:
 || month ||8--4 || 0--12 ||
 || day || 0--3 || 0 -- 31 ||
 
+
+`yyyy yyym mmmm dddd`
+
 Year 100 is used to indicate a temporary file.
