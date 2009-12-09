@@ -13,10 +13,23 @@ All values are little-endian unless specified otherwise.
 || *Name* || *Offset* || *Size* ||
 || first_block || $00 || 2 bytes ||
 || last_block || $02 || 2 bytes ||
-|| file_kind || $04 || 2 bytes ||
+|| file_kind || $04 || 1 byte ||
+|| reserved || $05 || 1 byte ||
 || volume_name || $06 || 8 bytes ||
 || volume_last_block || $0e || 2 bytes ||
-|| file_count || $10 || 1 byte ||
-|| load_time || $11 || 2 bytes ||
-|| boot_date || $13 || 3 bytes ||
+|| file_count || $10 || 2 byte ||
+|| load_time || $12 || 2 bytes ||
+|| boot_date || $14 || 2 bytes ||
 || reserved || $16 || 4 bytes ||
+
+= File Entry =
+
+
+|| *Name* || *Offset* || *Size* ||
+|| first_block || $00 || 2 bytes ||
+|| last_block || $02 || 2 bytes ||
+|| file_kind || $04 || 1 byte ||
+|| status || $05 || 1 byte ||
+|| file_name || $06 || 16 bytes ||
+|| last_byte || $16 || 2 bytes ||
+|| modification_date || $18 || 2 bytes ||
