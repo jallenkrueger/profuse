@@ -7,7 +7,7 @@ UCSD Pascal was a language/OS/File System developed by the University of Califor
 The Pascal File system used 512k blocks (like ProDOS) and 2-byte block pointers (which implies a maximum disk size of 32 Meg, like ProDOS).  Files don't store their file size per se, but rather the start block, end block, and size of last block.  This implies a maximum file size of 32 Meg, minus the overhead of boot and volume blocks. 
 
 
-Block 0 and 1 contain boot code.  Blocks 2--5 contain the volume header and up to 76 file entries
+Block 0 and 1 contain boot code.  Blocks 2--5 contain the volume header and up to 77 file entries.  When a file is deleted, all subsequent records are moved up.
 
 = Volume Header =
 
@@ -50,3 +50,24 @@ Dates are stored in a 2 bytes structure:
 `yyyy yyym mmmm dddd`
 
 Year 100 is used to indicate a temporary file.
+
+= File Types =
+
+|| *Name* || *Value* ||
+|| untypedfile || $00 ||
+|| xdskfile || $01 ||
+|| codefile || $02 ||
+|| textfile || $03 ||
+|| infofile || $04 ||
+|| datafile || $05 ||
+||  graffile  || $06 ||
+|| fotofile || $07 ||
+|| securedir || $08 ||
+
+N.B. -- Pascal does not support subdirectories.  `securedir` was a later addition and not implemented.
+
+
+= References =
+
+  * http://groups.google.com/group/comp.sys.apple2.programmer/browse_thread/thread/85b993a1c8a0c504/5faf503ef4be5756?hl=en&ie=UTF-8
+  * [http://www.umich.edu/~archive/apple2/technotes/tn/pasc/TN.PASC.016 Pascal Technote #16]
