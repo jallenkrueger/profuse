@@ -1,0 +1,22 @@
+#summary Information on the Apple Pascal File System
+
+= Introduction =
+
+UCSD Pascal was a language/OS/File System developed by the University of California, San Diego.  Apple sold an Apple II implementation/port.  IIgs System 6 included a read-only Apple Pascal FST.
+
+The Pascal File system used 512k blocks (like ProDOS) and 2-byte block pointers (which implies a maximum disk size of 32 Meg, like ProDOS).  Files don't store their file size per se, but rather the start block, end block, and size of last block.  This implies a maximum file size of 32 Meg, minus the overhead of boot and volume blocks. 
+
+= Volume Header =
+
+All values are little-endian unless specified otherwise.
+
+|| *Name* || *Offset* || *Size* ||
+|| first_block || $00 || 2 bytes ||
+|| last_block || $02 || 2 bytes ||
+|| file_kind || $04 || 2 bytes ||
+|| volume_name || $06 || 8 bytes ||
+|| volume_last_block || $0e || 2 bytes ||
+|| file_count || $10 || 1 byte ||
+|| load_time || $11 || 2 bytes ||
+|| boot_date || $13 || 3 bytes ||
+|| reserved || $16 || 4 bytes ||
