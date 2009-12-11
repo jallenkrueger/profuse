@@ -44,11 +44,11 @@ Dates are stored in a 2 bytes structure:
 
 || *Field* || *bits* || *range* ||
 || year || 15--9 || 0-100 ||
-|| month ||8--4 || 0--12 ||
-|| day || 0--3 || 0 -- 31 ||
+|| day ||8--4 || 0--31 ||
+|| month || 0--3 || 0 -- 12 ||
 
 
-`yyyy yyym mmmm dddd`
+`yyyy yyyd dddd mmmm`
 
 Year 100 is used to indicate a temporary file.
 
