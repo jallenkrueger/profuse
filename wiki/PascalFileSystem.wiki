@@ -151,9 +151,9 @@ Research (with the file manager) has shown that the only illegal characters are:
   * ,
   * whitespace (stripped out)
 
-Additionally, the file manager cannot create (or transfer to) files with a '['.  I did not try creating a '[' file programmatically, so it's status is ambiguous.
+Additionally, the file manager cannot create (or transfer to) files with a '['.  I did not try creating a '[' file programmatically, so its status is ambiguous.
 
-For volume names, ':' and subsequent characters are stripped.  The illegal filename characters are allowed, but confuse the file manager.  You can still refer to the disk by volume number though.
+For volume names, ':' and subsequent characters are stripped.  The illegal filename characters are allowed but confuse the file manager.  You can still refer to the disk by volume number though.
 
 
 = References =
