@@ -11,7 +11,7 @@ Block 0 and 1 contain boot code.  Blocks 2--5 contain the volume header and up t
 
 = Volume Header =
 
-All values are little-endian unless specified otherwise.
+All values are little-endian unless specified otherwise.  All blocks are 512 bytes in length.
 
 || *Name* || *Offset* || *Size* ||
 || first_block || $00 || 2 bytes ||
@@ -25,9 +25,40 @@ All values are little-endian unless specified otherwise.
 || boot_date || $14 || 2 bytes ||
 || reserved || $16 || 4 bytes ||
 
+== fields ==
+=== first_block ===
+
+The first block of the directory structure.  This should always be 2.
+
+=== last_block ===
+
+The block _after_ the last block of the directory structure.  (i.e., the next available block). This should always be 6.
+
+=== file_kind ===
+
+This should always be 0.
+
+=== volume_name ===
+
+The volume name, stored with a leading length byte (i.e., a pstring).  The volume name can contain uppercase letters, numbers, and periods.  May be 1--7 character long.
+
+=== volume_last_block ===
+The number of blocks on the volume.
+
+=== file count ===
+
+The number of files.  May be 0--77.
+
+=== load_time ===
+
+_????_
+
+=== boot_date ===
+
+The date last booted.
+
 
 = File Entry =
-
 
 || *Name* || *Offset* || *Size* ||
 || first_block || $00 || 2 bytes ||
@@ -37,6 +68,52 @@ All values are little-endian unless specified otherwise.
 || file_name || $06 || 16 bytes ||
 || last_byte || $16 || 2 bytes ||
 || modification_date || $18 || 2 bytes ||
+
+
+== fields ==
+
+=== first_block ===
+
+The first block of the file
+
+=== last_block ===
+
+
+The block _after_ the last file block  (i.e., the next available block). 
+
+=== file_kind ===
+
+|| *Name* || *Value* ||
+|| untypedfile || $00 ||
+|| xdskfile || $01 ||
+|| codefile || $02 ||
+|| textfile || $03 ||
+|| infofile || $04 ||
+|| datafile || $05 ||
+||  graffile  || $06 ||
+|| fotofile || $07 ||
+|| securedir || $08 ||
+
+N.B. -- Pascal does not support subdirectories.  `securedir` was added between pascal I and pascal II but was not fully implemented.
+
+=== status ===
+
+Used by wildcard file listings [???]
+
+N.B. -- bit 0 is the status bit, all other bits are reserved.
+
+===file_name ===
+
+The file name, stored with a leading length byte (i.e., a pstring).  The volume name can contain uppercase letters, numbers, and periods.  May be 1--15 character long.
+
+
+=== last_byte ===
+
+The number of bytes used in the last block.  Should be 1--512.
+
+=== modification_date ===
+
+The date the file was created or last modified.
 
 = Dates =
 
@@ -52,20 +129,7 @@ Dates are stored in a 2 bytes structure:
 
 Year 100 is used to indicate a temporary file.
 
-= File Types =
 
-|| *Name* || *Value* ||
-|| untypedfile || $00 ||
-|| xdskfile || $01 ||
-|| codefile || $02 ||
-|| textfile || $03 ||
-|| infofile || $04 ||
-|| datafile || $05 ||
-||  graffile  || $06 ||
-|| fotofile || $07 ||
-|| securedir || $08 ||
-
-N.B. -- Pascal does not support subdirectories.  `securedir` was a later addition and not implemented.
 
 
 = References =
