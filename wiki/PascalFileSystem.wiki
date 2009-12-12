@@ -134,6 +134,7 @@ Year 100 is used to indicate a temporary file.
 = File Name Restrictions =
 
 There seems to be a lot of bad information about file name restrictions. [http://en.wikipedia.org/wiki/Apple_Pascal Wikipedia] states:
+
 _Apple Pascal dropped the length to fifteen characters and allowed only letters, numbers and periods to be used._
 
 The [http://www.bitsavers.org/pdf/univOfCalSanDiego/UCSD_PASCAL_II.0_Manual_Mar79.pdf UCSD Pascal II manual] states:
