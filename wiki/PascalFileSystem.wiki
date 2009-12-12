@@ -83,18 +83,18 @@ The block _after_ the last file block  (i.e., the next available block).
 
 === file_kind ===
 
-|| *Name* || *Value* ||
-|| untypedfile || $00 ||
-|| xdskfile || $01 ||
-|| codefile || $02 ||
-|| textfile || $03 ||
-|| infofile || $04 ||
-|| datafile || $05 ||
-||  graffile  || $06 ||
-|| fotofile || $07 ||
-|| securedir || $08 ||
+|| *Name* || *Value* || *Use* ||
+|| untypedfile || $00 || Volume Header ||
+|| xdskfile || $01 || Bad blocks ||
+|| codefile || $02 || Machine executable code ||
+|| textfile || $03 || Text ||
+|| infofile || $04 || Debugger Information ||
+|| datafile || $05 || Data ||
+|| graffile  || $06 || Compressed graphic image `*` ||
+|| fotofile || $07 || Screen image ||
+|| securedir || $08 || Subdirectory [???] `*` ||
 
-N.B. -- Pascal does not support subdirectories.  `securedir` was added between pascal I and pascal II but was not fully implemented.
+`*` Not implemented.
 
 === status ===
 
