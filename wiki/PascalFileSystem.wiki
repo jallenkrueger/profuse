@@ -40,7 +40,8 @@ This should always be 0.
 
 === volume_name ===
 
-The volume name, stored with a leading length byte (i.e., a pstring).  The volume name can contain uppercase letters, numbers, and periods.  May be 1--7 character long.
+The volume name, stored with a leading length byte (i.e., a pstring).  May be 1--7 characters in length.
+
 
 === volume_last_block ===
 The number of blocks on the volume.
@@ -104,7 +105,7 @@ N.B. -- bit 0 is the status bit, all other bits are reserved.
 
 ===file_name ===
 
-The file name, stored with a leading length byte (i.e., a pstring).  The volume name can contain uppercase letters, numbers, and periods.  May be 1--15 character long.
+The file name, stored with a leading length byte (i.e., a pstring).  May be 1--15 characters in length.
 
 
 === last_byte ===
@@ -129,6 +130,26 @@ Dates are stored in a 2 bytes structure:
 
 Year 100 is used to indicate a temporary file.
 
+
+= File Name Restrictions =
+
+There seems to be a lot of bad information about file name restrictions. [http://en.wikipedia.org/wiki/Apple_Pascal Wikipedia] states:
+_Apple Pascal dropped the length to fifteen characters and allowed only letters, numbers and periods to be used._
+
+The [http://www.bitsavers.org/pdf/univOfCalSanDiego/UCSD_PASCAL_II.0_Manual_Mar79.pdf UCSD Pascal II manual] states:
+
+_A volume name be be 7 or less characters long and may not contain '=', '$', '?' or ','._
+
+_A legal filename can consist of up to 15 characters.  ... Lower-case letters are translated to upper-case, and blanks and non-printing characters are removed from the filename.  Legal characters for filenames are the alphanumerics and the special characters '-', '/', '\', '_', and '.'._
+
+Research (with the file manager) has shown that the only illegal characters are:
+
+  * $
+  * =
+  * ?
+  * ,
+
+Additionally, ':' and subsequent characters are ignored when zeroing a volume.  Fileman cannot create (or transfer to) files with a '[', although that is a legal volume character, so its status is ambiguous. 
 
 
 
