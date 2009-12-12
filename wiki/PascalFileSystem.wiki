@@ -28,7 +28,7 @@ All values are little-endian unless specified otherwise.  All blocks are 512 byt
 == fields ==
 === first_block ===
 
-The first block of the directory structure.  This should always be 2.
+The first block of the file system header (boot block and directory blocks) This should always be 0.
 
 === last_block ===
 
