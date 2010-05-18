@@ -67,7 +67,7 @@ The number of 512-byte blocks in the disk image.  For Non-ProDOS Order disk imag
 Offset to the first byte of the image data.  The image data must come before the comment data and the creator data (if present).
 
 == data_length ==
-Length of the image data in bytes.  For ProDOS Order disk image, this should be blocks * 512.
+Length of the image data in bytes.  For ProDOS Order disk image, this should be blocks `*` 512.
 
 ==comment_offset==
 Offset to the first byte of the comment data.  May be 0 if there is no comment. 
