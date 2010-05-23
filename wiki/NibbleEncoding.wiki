@@ -14,4 +14,10 @@ An examination of the contents of the two types of fields is on order. The Addre
 Each byte of the Address Field is encoded into two bytes when written to the disk.  APPENDIX C describes the ``4 and 4'' method used for Address Field encoding.
 
 
+The prologue consists of three bytes which form a unique sequence, found in no other component of the track.  This fact enables ProDOS to locate and Address Field with almost no possibility of error.  The three bytes are $D5, $AA, and $96.  The $D5 and $AA are reserved (never written as data), this insuring the uniqueness of the prologue.  The $96, following this unique string, indicates that the data following constitutes an Address Field (as opposed to a Data Field).  The address information follows next, consisting of the volume*, track, and sector number and a checksum.  This information is absolutely essential for ProDOS to know where it is positioned on a particular diskette.  The checksum is computed by exclusive-ORing the first three pieces of information, and is used to verify it's integrity.  Lastly follows the epilogue, which contains the three bytes $DE, $AA, and $EB.  The $EB is only partly written during initialization, and is therefore never verified when an Address Field is read.  The epilogue bytes are sometimes referred to as bit-slip marks, which provide added assurance that the drive is still in sync with the bytes on the disk.  These bytes are probably unnecessary, but do provide a means of double checking.
+
+* Volume number is a leftover from earlier operating systems and is not used by ProDOS.
+= Data Fields =
+
+
  
