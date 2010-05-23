@@ -1,0 +1,17 @@
+#summary Information on Nibble Encoding
+
+(Taken from Beneath Apple ProDOS)
+
+= Address Fields =
+
+An examination of the contents of the two types of fields is on order. The Address Field contains the address or identifying information about the Data Field which follows it.  The volume, track, and sector number of any given sector can be thought of as its ``address,'' much like a country, city, and street number might identify a house.  As shown previously in Figure 3.6, there are a number of components which make up the Address Field.  A more detailed illustration is given in Figure 3.12.
+
+
+|| Prologue || Volume || Track || Sector || Checksum || Epilogue ||
+|| `D5 AA 96` || `XX YY` || `XX YY` || `XX YY` || `XX YY` || `DE AA EB` ||
+
+
+Each byte of the Address Field is encoded into two bytes when written to the disk.  APPENDIX C describes the ``4 and 4'' method used for Address Field encoding.
+
+
+ 
