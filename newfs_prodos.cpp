@@ -1,199 +1,253 @@
-/*
- *  newfs_prodos.cpp
- *  ProFUSE
- *
- *  Created by Kelvin Sherlock on 9/2/2009.
- *
- */
- 
+#include <cstring>
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
-
-#include <climits>
 #include <cctype>
+#include <cerrno>
+#include <memory>
 
 #include <unistd.h>
-#include <libgen.h>
 
-#define VERSION_STRING "0.1"
+#include "BlockDevice.h"
+#include "DavexDiskImage.h"
+#include "DiskCopy42Image.h"
+#include "Entry.h"
+#include "Exception.h"
+#include "RawDevice.h"
+#include "UniversalDiskImage.h"
 
-void help(void)
+
+#define NEWFS_VERSION "0.1"
+
+using namespace ProFUSE;
+
+void usage()
 {
-    printf("newfs_prodos v %s\n",  VERSION_STRING);
+    std::printf("newfs_prodos %s\n", NEWFS_VERSION);
+    std::printf("\n");
     
-    printf("usage: newfs_prodos -N -s size -v volname file\n");
-    printf("\t-N          test mode (do not create)\n");
-    printf("\t-s size     file size in blocks (or use K/M)\n");
-    printf("\t-v volname  volume name");
+    std::printf("newfs_prodos [-v volume_name] [-s size] [-f format] file\n");
+    std::printf("\n");
+    std::printf("  -v volume_name   specify the volume name.\n"
+                "                   Default is Untitled.\n"
+                "  -s size          specify size in blocks.\n"
+                "                   Default is 1600 blocks (800K)\n"
+                "  -f format        specify the disk image format. Valid values are:\n"
+                "                   2mg   Universal Disk Image (default)\n"
+                "                   dc42  DiskCopy 4.2 Image\n"
+                "                   po    ProDOS Order Disk Image\n"
+                "                   do    DOS Order Disk Image\n"
+                "                   davex Davex Disk Image\n"
+    );
+
+}
+
+/*
+ * \d+ by block
+ * \d+[Kk] by kilobyte
+ * \d+[Mm] by megabyte
+ */
+unsigned parseBlocks(const char *cp)
+{
+    unsigned long blocks = 0;
+    char *mod;
     
-    exit(0);
+    errno = 0; 
+    blocks = std::strtoul(cp, &mod, 10);
+    if (errno) return -1;
+    
+    if (mod == cp) return -1;
+    if (blocks  > 0xffff) return -1;
+    
+    if (mod)
+    {
+        switch(*mod)
+        {
+        case 0:
+            break;
+            
+        case 'm': // 1m = 1024*1024b = 2048 blocks
+        case 'M':
+            blocks *= 2048;
+            break;
+            
+        case 'k':  // 1k = 1024b = 2 blocks
+        case 'K':
+            blocks *= 2;
+            break;
+        }
+        if (blocks > 0xffff) return -1;
+    }
+
+
+    return (unsigned)blocks;
 }
 
 
-    //returns number of blocks.
-long parseBlocks(const char *cp)
+// return the basename, without an extension.
+std::string filename(const std::string& src)
 {
-    long size;
-    char *end;
-    unsigned base = 0;
-    const char *ocp = cp;
+    unsigned start;
+    unsigned end;
     
-    if (cp && *cp == '$')
-    {
-        base = 16;
-        cp++;
-    } 
     
-    if (!cp || !*cp)
+    if (src.empty()) return std::string("");
+
+    start = end = 0;
+    
+    for(unsigned i = 0, l = src.length(); i < l; ++i)
     {
-        fprintf(stderr, "Invalid size.\n");
-        exit(1);
+        char c = src[i];
+        if (c == '/') start = end = i + 1;
+        if (c == '.') end = i;
     }
     
-    size = strtol(cp, &end, base);
+    if (start == src.length()) return std::string("");
     
-    if (end == cp)
-    {
-        fprintf(stderr, "Invalid size: `%s'\n", ocp);
-        exit(1);
-    }
-    
-    // number may be M, K, or null (blocks)    
-    if (*end == 0) return size;
-    if (*end == 'K') return size << 1;
-    if (*end == 'M') return size << 10;
-    
-    fprintf(stderr, "Invalid size modifier: `%s'\n", end);
-    exit(1);
-     
-    return -1;
+    if (start == end) return src.substr(start);
+    return src.substr(start, end - start); 
 }
 
 
-// verify a size is reasonable for a ProDOS volume
-bool validBlocks(long blocks)
+bool ValidName(const char *cp)
 {
-    if (blocks < 280) return false;
-    if (blocks > (32 << 10)) return false;
     
-    return true;
-}
-
-bool validName(const char *name)
-{
-    unsigned i;
+    unsigned i = 0;
+    if (!cp || !*cp) return false;
     
-    if (name == 0 || *name == 0) return false;
-        
-    for(i = 0; name[i]; ++i)
+    if (!isalpha(*cp)) return false;
+    
+    for (i = 1; i <17; ++i)
     {
-        char c = name[i];
+        unsigned char c = cp[i];
+        if (c == 0) break;
         
         if (c == '.') continue;
-        if (c & 0x80) return false;
-        if (isdigit(c) && i) continue;
-        if (isalpha(c)) continue;
-
+        if (isalnum(c)) continue;
+        
         return false;
     }
     
-    // i = strlen(name) + 1
     return i < 16;
-
 }
-
-const char *generateName(const char *src)
-{
-    // basename may alter it's argument.
-    
-    char * cp = strdup(src);
-    
-    cp = basename(cp);
-    
-    unsigned l = strlen(cp);
-    // remove any extension...
-    for (unsigned i = l; i; --i)
-    {
-        if (cp[i-1] == '.')
-        {
-            cp[i-1] = 0;
-            l = i - 1;
-            break;
-        }
-    } 
-    if (validName(cp)) return cp;
-    
-    free(cp);
-    return "Untitled";
-}  
 
 int main(int argc, char **argv)
 {
-    int ch;
-    bool fTest = false;
-    const char *fVolname = NULL;
-    const char *filename;
+    unsigned blocks = 1600;
+    std::string volumeName;
+    std::string fileName;
+    int format = 0;
+    const char *fname;
+    int c;
     
-    long fBlocks = 800 << 1;
+    // ctype uses ascii only.
+    ::setlocale(LC_ALL, "C");
     
-    
-    while ((ch = getopt(argc, argv, "hNs:v:")) != -1)
+    while ( (c = ::getopt(argc, argv, "hf:s:v:")) != -1)
     {
-        switch(ch)
+        switch(c)
         {
+        case '?':
         case 'h':
-        default:
-            help();
-            break;
-            
-        case 'N':
-            fTest = true;
+            usage();
+            return 0;
             break;
         
         case 'v':
-            fVolname = optarg;
+            volumeName = optarg;
+            // make sure it's legal.
+            if (!ValidName(optarg))
+            {
+                std::fprintf(stderr, "Error: `%s' is not a valid ProDOS volume name.\n",  optarg);
+                return 0x40;
+            }
             break;
-        
-        
+            
         case 's':
-            fBlocks = parseBlocks(optarg);
+            blocks = parseBlocks(optarg);
+            if (blocks > 0xffff)
+            {
+                std::fprintf(stderr, "Error: `%s' is not a valid disk size.\n", optarg);
+                return 0x5a;
+            }
             break;
-        }   
-    }
-
-    // verify size is ok
-    if (!validBlocks(fBlocks))
-    {
-        fprintf(stderr, "Invalid size.  Please use 140K -- 32M\n");
-        exit(1);
+        
+        case 'f':
+            {
+                format = DiskImage::ImageType(optarg);
+                if (format == 0)
+                {
+                    std::fprintf(stderr, "Error: `%s' is not a supported disk image format.\n", optarg);
+                    return -1;
+                }
+            }
+        
+        }
     }
     
-    if (fVolname && !validName(fVolname))
-    {
-        fprintf(stderr, "Invalid volume name: `%s'.\n", fVolname);
-        exit(1);
-    }
-
-    argv += optind;
     argc -= optind;
+    argv += optind;
     
     if (argc != 1)
     {
-        help();
+        usage();
+        return -1;
     }
-    filename = *argv;
     
-    if (!fVolname) fVolname = generateName(filename);
-
-    if (fTest)
+    fname = argv[0];
+    fileName = argv[0];
+    
+    // generate a filename.
+    if (volumeName.empty())
     {
-        printf(" Image Name: %s\n", filename);
-        printf("Volume Name: %s\n", fVolname);
-        printf("Volume Size: %u blocks (%uK)\n", fBlocks, fBlocks >> 1);
-    
-        exit(0);
+        volumeName = filename(fileName);
+        if (volumeName.empty() || !ValidName(volumeName.c_str()))
+            volumeName = "Untitled";
     }
-
-    exit(0);
+    
+    if (format == 0) format = DiskImage::ImageType(fname, '2IMG');
+    
+    
+    try
+    {
+        std::auto_ptr<BlockDevice> device;
+        std::auto_ptr<VolumeDirectory> volume;
+                
+        // todo -- check if path matches /dev/xxx; if so, use RawDevice.
+        // todo -- check if file exists at path?
+        
+        switch(format)
+        {
+        case 'DC42':
+            device.reset(DiskCopy42Image::Create(fname, blocks, volumeName.c_str()));
+            break;
+            
+        case 'PO__':
+            device.reset(ProDOSOrderDiskImage::Create(fname, blocks));
+            break;
+            
+        case 'DO__':
+            device.reset(DOSOrderDiskImage::Create(fname, blocks));
+            break;
+        
+        case 'DVX_':
+            device.reset(DavexDiskImage::Create(fname, blocks, volumeName.c_str()));
+            break;
+            
+        case '2IMG':
+        default:
+            device.reset(UniversalDiskImage::Create(fname, blocks));
+        }
+    
+        // VolumeDirectory assumes ownership of device,
+        // but doesn't release it on exception.
+        volume.reset(VolumeDirectory::Create(volumeName.c_str(), device.get()));
+        device.release();
+    
+    }
+    catch (Exception e)
+    {
+        std::fprintf(stderr, "Error: %s\n", e.what());
+        return -1;
+    }
+    return 0;
 }

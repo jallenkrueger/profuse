@@ -1,16 +1,11 @@
-#include "Bitmap.h"
-
 #include <cstring>
 
-namespace ProDOS {
+#include "Bitmap.h"
+#include "BlockDevice.h"
+#include "auto.h"
 
 
-
-/*
- * 
- *
- *
- */
+using namespace ProFUSE;
 
 // returns # of 1-bits set (0-8)
 inline static unsigned popCount(uint8_t x)
@@ -29,215 +24,177 @@ inline static unsigned popCount(uint8_t x)
     return count;
 }
 
-inline static unsigned countLeadingZeros(uint8_t x)
+
+
+Bitmap::Bitmap(unsigned blocks)
 {
-    if (x == 0) return sizeof(uint8_t);
-    #ifdef __GNUC__
-    return __builtin_clz(x) + sizeof(uint8_t) - sizeof(unsigned);
-    #endif    
+    _blocks = _freeBlocks = blocks;
     
-    unsigned rv = 0;
-    if ((x & 0xf0) == 0) { x <<= 4; rv = 4; }
-    if (x & 0x80) return rv;
-    if (x & 0x40) return rv + 1;
-    if (x & 0x20) return rv + 2;
-    if (x & 0x10) return rv + 3;
-    // unreachable
-    return 0;
+    _bitmapBlocks = (blocks + 4095) / 4096;
+    _freeIndex = 0;
+    
+    unsigned bitmapSize = _bitmapBlocks * 512;
+    unsigned blockSize = blocks / 8;
+    
+    auto_array<uint8_t> bitmap(new uint8_t[bitmapSize]);
+
+    // mark overflow in use, everything else free.
+
+    std::memset(bitmap, 0xff, blocks / 8);
+    std::memset(bitmap + blockSize, 0x00, bitmapSize - blockSize);
+    
+    // edge case
+    unsigned tmp = blocks & 0x07;
+    
+    bitmap[blocks / 8] = ~(0xff >> tmp);
+    
+    _bitmap = bitmap.release();
+    
+    
 }
 
-inline static unsigned countLeadingOnes(uint8_t x)
+Bitmap::Bitmap(BlockDevice *device, unsigned keyPointer, unsigned blocks)
 {
-    return countLeadingZeros(~x);
-}
-
-Bitmap::Bitmap(unsigned blocks) :
-    _blocks(blocks), 
-    _freeBlocks(blocks),
-    _bitmapSize((blocks + 4096 - 1) >> 12),
-    _bitmap(NULL)
-{
-    // 1 block = 512 bytes = 4096 bits 
-    _bitmap = new uint8_t[_bitmapSize];
-
-    // mark every requested block as free.
-    unsigned bytes = blocks >> 3;
-    std::memset(_bitmap, 0xff, bytes);
-
-    // all trailing blocks are marked as used.
-    std::memset(_bitmap + bytes, 0x00, _bitmapSize - bytes);
+    _blocks = blocks;
+    _freeBlocks = 0;
+    _freeIndex = 0;
     
-    // and handle the edge case...
-    /*
-     * 0 -> 0 0 0 0  0 0 0 0
-     * 1 -> 1 0 0 0  0 0 0 0
-     * 2 -> 1 1 0 0  0 0 0 0
-     * 3 -> 1 1 1 0  0 0 0 0
-     * ...
-     * 7 -> 1 1 1 1  1 1 1 0
-     */
-     //unsigned tmp = (1 << (8 - (blocks & 0x07))) - 1;
-     //_bitmap[bytes] = ~tmp & 0xff;
+    _bitmapBlocks = (blocks + 4095) / 4096;
 
-     _bitmap[bytes] = 0 - (1 << (8 - (blocks & 0x07)));
+    unsigned bitmapSize = _bitmapBlocks * 512;
+    unsigned blockSize = blocks / 8;
+    
+    auto_array<uint8_t> bitmap(new uint8_t[bitmapSize]);
 
-    //_bitmap[bytes] = (0xff00 >> (blocks & 0x07)) & 0xff;
+    for (unsigned i = 0; i < blockSize; ++i)
+    {
+        device->read(keyPointer + i, bitmap + 512 * i);
+    }
+    
+    // make sure all trailing bits are marked in use.
+
+    // edge case
+    unsigned tmp = blocks & 0x07;
+    
+    bitmap[blocks / 8] &= ~(0xff >> tmp);
+
+    std::memset(bitmap + blockSize, 0x00, bitmapSize - blockSize);
+
+    // set _freeBlocks and _freeIndex;
+    for (unsigned i = 0; i < (blocks + 7) / 8; ++i)
+    {
+        _freeBlocks += popCount(bitmap[i]);
+    } 
+    
+    if (_freeBlocks)
+    {
+        for (unsigned i = 0; i < (blocks + 7) / 8; ++i)
+        {
+            if (bitmap[i])
+            {
+                _freeIndex = i;
+                break;
+            }
+        }
+    }
+
+    
+    _bitmap = bitmap.release();
 }
 
 Bitmap::~Bitmap()
 {
-    delete[] _bitmap;
+    if (_bitmap) delete []_bitmap;
 }
 
 
-bool Bitmap::markBlock(unsigned block, bool inUse)
+void Bitmap::freeBlock(unsigned block)
 {
-    if (block >= _blocks) return false;
-
-    unsigned index = BlockIndex(block);
-    unsigned mask = BlockMask(block);
-    uint8_t data = _bitmap[index];
-
-    _freeBlocks -= popCount(data);
+    if (block >= _blocks) return;
     
-    if (inUse) data &= ~mask;
-    else data |= mask;
-
-    _bitmap[index] = data;
-    _freeBlocks += popCount(data);
+    unsigned index = block / 8;
+    unsigned offset = block & 0x07;
+    unsigned mask = 0x80 >> offset;
     
-    return true;
+    uint8_t tmp = _bitmap[index];
+    
+    if ((tmp & mask) == 0)
+    {
+        ++_freeBlocks;
+        _bitmap[index] = tmp | mask;
+    }
 }
 
-// find the first block starting from (and including) the
-// startingBlock
 
-int Bitmap::firstFreeBlock(unsigned startingBlock) const
+int Bitmap::allocBlock(unsigned block)
 {
-    if (startingBlock >= _blocks) return -1;
-    if (!_freeBlocks) return -1;
+    if (block >= _blocks) return -1;
     
-    unsigned index = BlockIndex(startingBlock);
-    unsigned bit = startingBlock & 0x0f;    
-    unsigned bytes = (_blocks + 7) >> 3;
     
-    // special case for first (partial) bitmap
-    if (bit != 0)
+    unsigned index = block / 8;
+    unsigned offset = block & 0x07;
+    unsigned mask = 0x80 >> offset;
+    
+    uint8_t tmp = _bitmap[index];
+    
+    if ((tmp & mask))
     {
-        uint8_t data = _bitmap[index];
-        unsigned mask = BlockMask(startingBlock);
-        // 0 0 1 0 0 0 0 0 -> 0 0 1 1 1 1 1 1
-        mask = (mask - 1) | mask;
-        data &= mask; 
-        if (data) return (index << 3) + countLeadingZeros(data);
-        ++index;
+        --_freeBlocks;
+        _bitmap[index] = tmp & ~mask;
+        return block;
     }
     
-    for ( ; index < bytes; ++index)
-    {
-        uint8_t data = _bitmap[index];
-        if (!data) continue;
-        
-        return (index << 3) + countLeadingZeros(data);
-    }
-
     return -1;
 }
 
 
-// count the number of unused blocks.... (including startingBlock)
-int Bitmap::countUnusedBlocks(unsigned startingBlock, unsigned maxSearch) const
+int Bitmap::allocBlock()
 {
-    if (startingBlock >= _blocks) return -1;
     if (!_freeBlocks) return -1;
+    
+    unsigned freeIndex = _freeIndex;
+    unsigned maxIndex = (_blocks + 7) / 8;
 
-    unsigned count = 0;
 
-    unsigned index = BlockIndex(startingBlock);
-    unsigned bit = startingBlock & 0x0f;
-    
-    unsigned bytes = (_blocks + 7) >> 3;
-    
-    
-    // special case for the first (partial) byte.    
-    if (bit)
+    for (unsigned index = _freeIndex; index < maxIndex; ++index)
     {
-        uint8_t data = _bitmap[index];
-        if (data == 0) return 0;
-        unsigned mask = BlockMask(startingBlock);
-        // 0 0 1 0 0 0 0 0 -> 1 1 0 0 0 0 0 0
-        mask = ~ ((mask - 1) | mask);
-        data = data | mask;
+        uint8_t tmp = _bitmap[index];
+        if (!tmp) continue;
         
-        if (data == 0xff) 
+        unsigned mask = 0x80;
+        for (unsigned offset = 0; offset < 8; ++offset)
         {
-            count = 8 - bit;
-            if (count >= maxSearch) return count;
-            ++index;
+            if (tmp & mask)
+            {
+                _freeIndex = index;
+                _bitmap[index] = tmp & ~mask;
+                --_freeBlocks;
+                return index * 8 + offset;
+            }
+            mask = mask >> 1;
         }
-        
-        else
-        {
-            return countLeadingOnes(data) - bit;
-        }   
     }
-    
-    
-    
-    for ( ; index < bytes; ++index)
+
+    for (unsigned index = 0; index < freeIndex; ++index)
     {
-        uint8_t data = _bitmap[index];
+        uint8_t tmp = _bitmap[index];
+        if (!tmp) continue;
         
-        // no free blocks = end search
-        if (data == 0) break;
-        
-        // all free = continue (if necessary)
-        if (data == 0xff)
+        unsigned mask = 0x80;
+        for (unsigned offset = 0; offset < 8; ++offset)
         {
-            count += 8;
-            if (count >= maxSearch) break;
-            continue;
+            if (tmp & mask)
+            {
+                _freeIndex = index;
+                _bitmap[index] = tmp & ~mask;
+                --_freeBlocks;
+                return index * 8 + offset;
+            }
+            mask = mask >> 1;
         }
-        
-        // otherwise, add on any leading free and terminate.
-        count += countLeadingOnes(data);
-        break;  
     }
 
-    return count;
-
-
-}
-
-// finds the first free block (with a possible range).
-int Bitmap::freeBlock(unsigned count) const
-{
-    if (count == 0 || count > freeBlocks()) return -1;
     
-    // we could keep a linked list/etc of
-    // free ranges
-    // for now, scan the entire bitmap.
-
-
-    int startBlock = 0;
-    --count;
-    
-    for(;;)
-    {
-        startBlock = firstFreeBlock(startBlock);
-        if (startBlock < 0) return -1;
-    
-        if (count == 0) return startBlock;
-        
-        int tmp = countUnusedBlocks(startBlock + 1, count);
-        if (tmp <= 0) break;
-        if (tmp >= count) return startBlock;
-
-        // miss ... jump ahead.
-        startBlock += tmp + 1;
-    }
+    // should never happen...
     return -1;
 }
-
-} // namespace
-

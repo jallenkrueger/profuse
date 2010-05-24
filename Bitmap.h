@@ -1,72 +1,48 @@
-#ifndef __PRODOS_BITMAP_H__
-#define __PRODOS_BITMAP_H__
+#ifndef __BITMAP_H__
+#define __BITMAP_H__
 
 #include <stdint.h>
 
-namespace ProDOS {
+
+
+namespace ProFUSE {
+
+class BlockDevice;
+
 
 class Bitmap {
 public:
+
     Bitmap(unsigned blocks);
+    Bitmap(BlockDevice *device, unsigned keyPointer, unsigned blocks);
+    //todo -- constructor by loading fro, block device...
     ~Bitmap();
-
-    bool blockFree(unsigned block) const;
-    bool markBlock(unsigned block, bool inUse);
-
-    unsigned blocks() const;
-    unsigned bitmapBlocks() const;
-
-    unsigned freeBlocks() const;
     
-    int firstFreeBlock(unsigned startingBlock = 0) const;
-    int countUnusedBlocks(unsigned startingBlock = 0, unsigned maxSearch = -1) const;
-        
-    int freeBlock(unsigned count = 1) const;
-
+    int allocBlock();
+    int allocBlock(unsigned block);
     
+    void freeBlock(unsigned block);
+    
+    
+    unsigned freeBlocks() const { return _freeBlocks; }
+    unsigned blocks() const { return _blocks; }
+    unsigned bitmapBlocks() const { return _bitmapBlocks; }
+    unsigned bitmapSize() const { return _bitmapBlocks * 512; }
+    const void *bitmap() const { return _bitmap; }
+
 private:
-    static unsigned BlockMask(unsigned block);
-    static unsigned BlockIndex(unsigned block);
 
-    unsigned _blocks;
+    unsigned _freeIndex;
     unsigned _freeBlocks;
-    unsigned _bitmapSize;
-    uint8_t *_bitmap;
     
+    unsigned _blocks;
+    unsigned _bitmapBlocks;
+    
+    uint8_t *_bitmap;
 };
 
-inline unsigned Bitmap::blocks() const
-{
-    return _blocks;
-}
 
-inline unsigned Bitmap::freeBlocks() const
-{
-    return _blocks;
-}
 
-inline unsigned Bitmap::bitmapBlocks() const
-{
-    return _bitmapSize >> 12;
 }
-
-inline unsigned Bitmap::BlockMask(unsigned block)
-{
-    return 0x80 >> (block & 0x07);
-}
-
-inline unsigned Bitmap::BlockIndex(unsigned block)
-{
-    return block >> 3;
-}
-
-inline bool Bitmap::blockFree(unsigned block) const
-{
-    if (block >= _blocks) return false;
-    return (_bitmap[BlockIndex(block)] & BlockMask(block)) != 0;
-}
-
-} // namespace
 
 #endif
-
