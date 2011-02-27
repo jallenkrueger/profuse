@@ -2,7 +2,7 @@
 
 = Introduction =
 
-Extended files are used for storing files which contain a resource fork.
+Extended files are used for storing files which contain a resource fork.  They are not supported by ProDOS 8.
 
 
 || storage_type || $05 ||
