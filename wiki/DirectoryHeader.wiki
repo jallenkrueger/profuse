@@ -19,7 +19,7 @@ This is the directory header, as originally defined in ProDOS/SOS.
 || parent_entry_length  || $26 || 1 byte || 
 
 
-= Update =
+= Updates =
 
   * SOS 1.3 and ProDOS 1.7 source code refer to the reserved data as the password enabled byte/password.  Neither actually implemented password support, though.
   * SOS 1.3 stores $76 in the password_enabled byte.
