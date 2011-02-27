@@ -7,7 +7,7 @@ Extended files are used for storing files which contain a resource fork.  They a
 
 || storage_type || $05 ||
 
-The key pointer is a block containing 2 mini entries; one for the data fork (at offset $0), one for the resource fork (at offset $100).
+The `key_pointer` is a block containing 2 mini entries; one for the data fork (at offset $0), one for the resource fork (at offset $100).
 
 
 == Mini Entry ==
