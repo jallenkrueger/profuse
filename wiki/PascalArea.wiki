@@ -1,0 +1,16 @@
+#summary Information on Apple II Pascal Areas
+
+= Introduction =
+
+An Apple II Pascal Area is a collection of psuedo-volumes (disk images) for use with the Pascal Profile Manager.
+
+|| storage_type || $04 ||
+|| file_name || PASCAL.AREA ||
+|| file_type || $EF ||
+
+
+`key_pointer` is first block of the file.  The file extends to the end of the disk as a contiguous file.  Therefore, only one Pascal Area may exist per ProDOS volume.
+
+References
+
+  * [http://www.umich.edu/~archive/apple2/technotes/tn/pdos/TN.PDOS.025 ProDOS Technote #25]
