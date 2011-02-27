@@ -2,7 +2,7 @@
 
 = Introduction =
 
-Extended attributes (xattr), while (sort of ) supported under linux, are somewhat of a second class citizen.  ProFUSE makes use of them to reveal custom ProDOS information (such as resource forks, file types, and creator types).  For debugging and verification, we present the `xattr` utility
+Extended attributes (xattr), while (sort of) supported under linux, are somewhat of a second class citizen.  ProFUSE makes use of them to reveal custom ProDOS information (such as resource forks, file types, and creator types).  For debugging and verification, we present the `xattr` utility
 
 = Compiling =
 
@@ -19,7 +19,12 @@ g++ xattr.cpp -o xattr
 
 `xattr dump filename [`_`attribute names`_` ...]`
 
-If no attribute names are specified, all attributes will be listed or dumped, accordingly.
+`xattr read filename attribute`
+
+`xattr write filename attribute`
+ 
+
+If no attribute names are specified, all attributes will be listed or dumped, accordingly. `read` and `write` read or write data from `stdin` or `stdout`, respectively.
 
 = Examples =
 {{{
