@@ -4,7 +4,7 @@
 
 Seedling files have a data fork that can fit within 1 block (the `key_pointer`) and no resource fork.
 
-|| storage_type || $1 ||
+|| storage_type || $01 ||
 || blocks_used || 1 ||
 || eof || 0-512* ||
 
