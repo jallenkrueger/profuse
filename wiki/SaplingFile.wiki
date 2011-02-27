@@ -4,7 +4,7 @@
 
 Sapling files have a 1-block index.  There is no resource fork
 
-|| storage_type || $2 ||
+|| storage_type || $02 ||
 || blocks_used || 1--257 ||
 || eof || 513--131072 ||
 
