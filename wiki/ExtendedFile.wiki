@@ -37,4 +37,4 @@ One or both of FInfo an xFInfo may be missing, in which case they should be cons
 
 [http://www.umich.edu/~archive/apple2/technotes/tn/pdos/TN.PDOS.025 ProDOS Technote #25]
 
-Programmer's Reference for 6.0 [pages 324, 325]
+Programmer's Reference for 6.0 (pages 324, 325)
