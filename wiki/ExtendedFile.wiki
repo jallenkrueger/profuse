@@ -31,7 +31,7 @@ As of System 6.0, Macintosh finder information can be stored after the data for
 || xFInfo || $14 || 16 bytes || ... ||
 || end_mark || $24 || 1 byte || 0 ||
 
-One or both of FInfo an xFInfo may be missing, in which case they should be considered 0-filled.
+One or both of FInfo and xFInfo may be missing, in which case they should be considered 0-filled.
 
 = References =
 
