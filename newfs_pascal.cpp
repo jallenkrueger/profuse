@@ -1,45 +1,24 @@
-#include <cstring>
-#include <cstdio>
-#include <cstdlib>
-#include <cctype>
-#include <cerrno>
+#include "../BlockDevice.h"
+#include "../Exception.h"
+#include "../MappedFile.h"
+#include "../DiskCopy42Image.h"
+
+#include "File.h"
+
+
 #include <memory>
+#include <cstdio>
+#include <cstring>
+#include <cerrno>
 
 #include <unistd.h>
 
-#include "BlockDevice.h"
-#include "DavexDiskImage.h"
-#include "DiskCopy42Image.h"
-#include "Entry.h"
-#include "Exception.h"
-#include "RawDevice.h"
-#include "UniversalDiskImage.h"
 
+using namespace Pascal;
 
 #define NEWFS_VERSION "0.1"
 
-using namespace ProFUSE;
 
-void usage()
-{
-    std::printf("newfs_prodos %s\n", NEWFS_VERSION);
-    std::printf("\n");
-    
-    std::printf("newfs_prodos [-v volume_name] [-s size] [-f format] file\n");
-    std::printf("\n");
-    std::printf("  -v volume_name   specify the volume name.\n"
-                "                   Default is Untitled.\n"
-                "  -s size          specify size in blocks.\n"
-                "                   Default is 1600 blocks (800K)\n"
-                "  -f format        specify the disk image format. Valid values are:\n"
-                "                   2mg   Universal Disk Image (default)\n"
-                "                   dc42  DiskCopy 4.2 Image\n"
-                "                   po    ProDOS Order Disk Image\n"
-                "                   do    DOS Order Disk Image\n"
-                "                   davex Davex Disk Image\n"
-    );
-
-}
 
 /*
  * \d+ by block
@@ -108,26 +87,25 @@ std::string filename(const std::string& src)
 }
 
 
-bool ValidName(const char *cp)
+void usage()
 {
-    
-    unsigned i = 0;
-    if (!cp || !*cp) return false;
-    
-    if (!isalpha(*cp)) return false;
-    
-    for (i = 1; i <17; ++i)
-    {
-        unsigned char c = cp[i];
-        if (c == 0) break;
-        
-        if (c == '.') continue;
-        if (isalnum(c)) continue;
-        
-        return false;
-    }
-    
-    return i < 16;
+    std::printf("newfs_pascal %s\n", NEWFS_VERSION);
+    std::printf("\n");
+
+
+    std::printf("newfs_pascal [-v volume_name] [-s size] [-f format] file\n");
+    std::printf("\n");
+    std::printf("  -v volume_name   specify the volume name.\n"
+                "                   Default is Untitled.\n"
+                "  -s size          specify size in blocks.\n"
+                "                   Default is 1600 blocks (800K)\n"
+                "  -f format        specify the disk image format. Valid values are:\n"
+                "                   dc42  DiskCopy 4.2 Image\n"
+                "                   do    DOS Order Disk Image\n"
+                "                   po    ProDOS Order Disk Image (default)\n"
+    );
+
+
 }
 
 int main(int argc, char **argv)
@@ -139,9 +117,7 @@ int main(int argc, char **argv)
     const char *fname;
     int c;
     
-    // ctype uses ascii only.
-    ::setlocale(LC_ALL, "C");
-    
+
     while ( (c = ::getopt(argc, argv, "hf:s:v:")) != -1)
     {
         switch(c)
@@ -155,9 +131,9 @@ int main(int argc, char **argv)
         case 'v':
             volumeName = optarg;
             // make sure it's legal.
-            if (!ValidName(optarg))
+            if (!VolumeEntry::ValidName(optarg))
             {
-                std::fprintf(stderr, "Error: `%s' is not a valid ProDOS volume name.\n",  optarg);
+                std::fprintf(stderr, "Error: `%s' is not a valid Pascal volume name.\n",  optarg);
                 return 0x40;
             }
             break;
@@ -173,7 +149,7 @@ int main(int argc, char **argv)
         
         case 'f':
             {
-                format = DiskImage::ImageType(optarg);
+                format = ProFUSE::DiskImage::ImageType(optarg);
                 if (format == 0)
                 {
                     std::fprintf(stderr, "Error: `%s' is not a supported disk image format.\n", optarg);
@@ -191,8 +167,9 @@ int main(int argc, char **argv)
     {
         usage();
         return -1;
-    }
+    }    
     
+
     fname = argv[0];
     fileName = argv[0];
     
@@ -200,54 +177,75 @@ int main(int argc, char **argv)
     if (volumeName.empty())
     {
         volumeName = filename(fileName);
-        if (volumeName.empty() || !ValidName(volumeName.c_str()))
-            volumeName = "Untitled";
+        if (volumeName.empty() || !VolumeEntry::ValidName(volumeName.c_str()))
+            volumeName = "PASCAL";
     }
     
-    if (format == 0) format = DiskImage::ImageType(fname, '2IMG');
-    
-    
+    if (format == 0) format = ProFUSE::DiskImage::ImageType(fname, 'PO__');
+
+
     try
     {
-        std::auto_ptr<BlockDevice> device;
-        std::auto_ptr<VolumeDirectory> volume;
-                
-        // todo -- check if path matches /dev/xxx; if so, use RawDevice.
-        // todo -- check if file exists at path?
+        std::auto_ptr<ProFUSE::BlockDevice> device;
+        std::auto_ptr<Pascal::VolumeEntry> volume;
+        
+        // TODO -- check for raw device.
+        
         
         switch(format)
         {
         case 'DC42':
-            device.reset(DiskCopy42Image::Create(fname, blocks, volumeName.c_str()));
+            device.reset(ProFUSE::DiskCopy42Image::Create(fname, blocks, volumeName.c_str()));
             break;
             
         case 'PO__':
-            device.reset(ProDOSOrderDiskImage::Create(fname, blocks));
+            device.reset(ProFUSE::ProDOSOrderDiskImage::Create(fname, blocks));
             break;
             
         case 'DO__':
-            device.reset(DOSOrderDiskImage::Create(fname, blocks));
+            device.reset(ProFUSE::DOSOrderDiskImage::Create(fname, blocks));
             break;
         
-        case 'DVX_':
-            device.reset(DavexDiskImage::Create(fname, blocks, volumeName.c_str()));
-            break;
             
-        case '2IMG':
         default:
-            device.reset(UniversalDiskImage::Create(fname, blocks));
+            std::fprintf(stderr, "Error: Unsupported diskimage format.\n");
+            return -1;
         }
-    
-        // VolumeDirectory assumes ownership of device,
-        // but doesn't release it on exception.
-        volume.reset(VolumeDirectory::Create(volumeName.c_str(), device.get()));
+        
+        
+        volume.reset(
+            new Pascal::VolumeEntry(volumeName.c_str(), device.get())
+        );
         device.release();
-    
+
+        /*
+        ProFUSE::MappedFile bootBlock("pascal.bootblock", true);
+        
+        if (bootBlock.fileSize() == 1024)
+        {
+            uint8_t buffer[512];
+            bootBlock.setBlocks(2);
+            
+            for (unsigned block = 0; block < 2; ++block)
+            {
+                bootBlock.readBlock(block, buffer);
+                volume->writeBlock(block, buffer);
+            }         
+        }
+        */
+        
     }
-    catch (Exception e)
+    catch (ProFUSE::POSIXException& e)
     {
-        std::fprintf(stderr, "Error: %s\n", e.what());
-        return -1;
+        std::fprintf(stderr, "%s\n", e.what());
+        std::fprintf(stderr, "%s\n", ::strerror(e.error()));
+        return -2;
     }
+    catch (ProFUSE::Exception& e)
+    {
+        std::fprintf(stderr, "%s\n", e.what());
+        return -2;
+    }
+    
     return 0;
 }
