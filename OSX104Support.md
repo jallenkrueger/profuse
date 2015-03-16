@@ -1,0 +1,1 @@
+OS X 10.4 uses a 32-bit kernel interface and does not have 64-bit ino\_t support.  Consequently, there is no libfuse\_ino64 and libfuse is only compiled for 32-bit ppc and 32-bit x86.
